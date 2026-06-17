@@ -1,5 +1,48 @@
-//Função para capturar as meta tags
+//submit do formulario para o controller
+// #form-add-promo é o id do formulario
+$("#form-add-promo").submit(function(evt){
+	//bloquer o comportamento padrão do submit
+	evt.preventDefault();
+	
+	//Pegando as infos escritas nos inputs do formulario
+	var promo = {};
+	//Recuperando o valor do link da promoção
+	promo.linkPromocao = $("#linkPromocao").val();
+	//Recuperando o valor da descrição
+	promo.descricao = $("#descricao").val();
+	//Recuperando o valor do preço
+	promo.preco = $("#preco").val();
+	//Recuperando o valor do titulo
+	promo.titulo = $("#titulo").val();
+	promo.categoria = $("#categoria").val();
+	//Queremos somente recuperar o valor da url e não setar
+	promo.linkImage = $("#linkImagem").attr("src");
+	//Recuperando o texto do site
+	promo.site = $("#site").text();
+	
+	// o objeto será informado no terminal para testes
+	console.log('promo >', promo);
+	
+	$.ajax({
+		// com o ajax, vamos informar que as informações coletadas serão postadas
+		method: "POST",
+		//Metodo do controller
+		url: "/promocao/save",
+		//o obejto com os dados 
+		data: promo,
+		//caso dê certo, essa classe será adicionada ao css
+		sucess: function(){
+			$("#alert").addClass("alert alert-sucess").text("OK! Promoção cadastrada com sucesso");
+		},
+		//caso dê errado, essa classe será adicionada ao css
+		error: function(xhr){
+			console.log("> error:", xhr.responseText);
+			$("#alert").addClass("alert alert danger").text("Não foi possível salvar esta promoção")
+		}
+	})
+})
 
+//Função para capturar as meta tags
 // linkPromocao é o id presente no promo-add
 $("#linkPromocao").on('change', function(){
 	// valor presente no input da url
