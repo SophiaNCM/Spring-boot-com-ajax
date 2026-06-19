@@ -8,6 +8,8 @@ import org.springframework.format.annotation.*;
 import org.springframework.format.annotation.NumberFormat.Style;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 //Informação basicas de uma tabela que será incluida no banco de dados
 @SuppressWarnings("serial")
 @Entity
@@ -18,9 +20,11 @@ public class Promocao implements Serializable{
 	private Long id;
 	
 	//Anotações da coluna
+	@NotBlank(message= "Um título é requerido")
 	@Column(name = "titulo", nullable = false)
 	private String titulo;
 	
+	@NotBlank(message= "O link da promoção é requerido")
 	@Column(name = "link_promocao", nullable = false)
 	private String link_promocao;
 	
@@ -33,6 +37,7 @@ public class Promocao implements Serializable{
 	@Column(name = "link_imagem", nullable = false)
 	private String link_imagem;
 	
+	@NotNull(message= "O preço é requerido")
 	@NumberFormat(style = Style.CURRENCY, pattern = "#,##0.00")
 	@Column(name = "preco_promocao", nullable = false)
 	private BigDecimal preco;
@@ -44,6 +49,7 @@ public class Promocao implements Serializable{
 	private LocalDateTime dtCadastro;
 	
 	//Chave estrangeira 
+	@NotNull(message= "Uma categoria é requerida")
 	@ManyToOne
 	@JoinColumn(name = "categoria_fk")
 	private Categoria categoria;

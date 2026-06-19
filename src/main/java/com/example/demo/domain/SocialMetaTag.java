@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class SocialMetaTag implements Serializable{
-	private String site;
-	private String title;
-	private String url;
-	private String image;
+	private String site = "";
+	private String title = "";
+	private String url = "";
+	private String image = "";
 	
 	public String getSite() {
 		return site;
