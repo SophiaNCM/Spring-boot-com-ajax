@@ -19,32 +19,38 @@ public class Promocao implements Serializable{
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	//Anotações da coluna
+	//Anotações da coluna e restrições da classe para o banco de dados  
 	@NotBlank(message= "Um título é requerido")
 	@Column(name = "titulo", nullable = false)
 	private String titulo;
 	
+	//Anotações da coluna e restrições da classe para o banco de dados  
+
 	@NotBlank(message= "O link da promoção é requerido")
 	@Column(name = "link_promocao", nullable = false)
 	private String link_promocao;
 	
+	//Anotações da coluna e restrições da classe para o banco de dados  
 	@Column(name = "site_promocao", nullable = false)
 	private String site_promocao;
 	
+	//Anotações da coluna e restrições da classe para o banco de dados  
 	@Column(name = "descricao", nullable = false)
 	private String descricao;
-	
+	//Anotações da coluna e restrições da classe para o banco de dados  
 	@Column(name = "link_imagem", nullable = false)
 	private String link_imagem;
 	
+	//Anotações da coluna e restrições da classe para o banco de dados  
 	@NotNull(message= "O preço é requerido")
 	@NumberFormat(style = Style.CURRENCY, pattern = "#,##0.00")
 	@Column(name = "preco_promocao", nullable = false)
 	private BigDecimal preco;
 	
+	//Anotações da coluna e restrições da classe para o banco de dados  
 	@Column(name = "total_likes")
 	private int likes;
-	
+	//Anotações da coluna e restrições da classe para o banco de dados  
 	@Column(name = "data_cadastro", nullable = false)
 	private LocalDateTime dtCadastro;
 	

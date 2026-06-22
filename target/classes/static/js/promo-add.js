@@ -31,12 +31,46 @@ $("#form-add-promo").submit(function(evt){
 		//o obejto com os dados 
 		data: promo,
 		beforeSend: function(){
+			//removendo as mensagens de erro
+			$("span").closest('.error-span').remove();
+			
+			//remover as bordas vermelhas
+			$("#categoria").removeClass("is-invalid");
+			$("#preco").removeClass("is-invalid");
+			$("#link_promocao").removeClass("is-invalid");
+			$("#titulo").removeClass("is-invalid");
+			
+			//habilita o loading
 			$("#form-add-promo").hide();
 			$("#loader-form").addClass("loader").show();
 		},
 		//caso dê certo, essa classe será adicionada ao css
 		success: function(){
-			$("#alert").addClass("alert alert-success").text("OK! Promoção cadastrada com sucesso");
+			//vai resetar todos os campos depois de salvar um objeto
+			$("#form-add-promo").each(function(){
+				this.reset();
+			});
+			$("#link_imagem").attr("src", "/images/promo-dark.png");
+			$("#site").text("");
+			
+			//remove o alerta de erro se tiver e adiciona o alerta de confirmado
+			$("#alert").removeClass("alert alert-danger").addClass("alert alert-success").text("OK! Promoção cadastrada com sucesso");
+			
+		},
+		//Aqui esta o ultimo passo da verificação, mostrar o erro na view
+		statusCode:{
+			422: function(xhr){
+				// mostrar o erro no terminal para o dev
+				console.log('status error:', xhr.status);
+				//colocando o erro em uma variavel
+				var errors = $.parseJSON(xhr.responseText);
+				//verifica a chave e o valor do erro
+				$.each(errors, function(key, val){
+					$("#" + key).addClass("is-invalid");
+					//mostra o erro de baixo do campo 
+					$("#error-"+key).addClass("invalid-feedback").append("<span class='error-span'>" + val + "</span>")
+				});
+			}
 		},
 		//caso dê errado, essa classe será adicionada ao css
 		error: function(xhr){
