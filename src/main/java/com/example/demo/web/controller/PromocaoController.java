@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,6 +44,14 @@ public class PromocaoController {
 	//Informando o repositorio de categoria
 	@Autowired
 	private CategoriaRepository categoriaRepository;
+	//==========================================================ADD LIKES ==================================================================
+	@PostMapping("/like/{id}")
+	public ResponseEntity<?> adicionarLikes(@PathVariable("id") Long id){
+		promocaoRepository.updateSomarLikes(id);
+		int likes = promocaoRepository.findLikesById(id);
+		return ResponseEntity.ok(likes);
+	}
+	//======================================================================================================================================
 	//======================================================= LISTAR AS PROMOCOES ==========================================================
 
 	@GetMapping("/list")

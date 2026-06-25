@@ -1,13 +1,15 @@
 //O numero da pagina começa no zero porque a pagina inicial é 0
 var pageNumber = 0;
 
-//Ao abrir a pagina vamos esconder o load e o texto ao final da 
+//===================================Ao abrir a pagina vamos esconder o load e o texto ao final da =================================================
 $(document).ready(function(){
 	$("#loader-img").hide();
 	$("#fim-btn").hide();
 });
 
-//efeito infinite scroll
+//===================================================================================================================================================
+
+//====================================================efeito infinite scroll=========================================================================
 $(window).scroll(function(){
 	var scrollTop = $(this).scrollTop();
 	var conteudo = $(document).height() - $(window).height();
@@ -21,7 +23,9 @@ $(window).scroll(function(){
 		}, 200);
 	}
 });
-//Fução para mudar de pagina
+//====================================================================================================================================================
+
+//===================================================Fução para atualizar a pagina====================================================================
 function loadByScrollBar(pageNumber){
 	//função ajax
 	$.ajax({
@@ -33,7 +37,7 @@ function loadByScrollBar(pageNumber){
 		},
 		//Antes de adicionar os proximos 8 card a imagem de load sera mostrada
 		beforeSend: function(){
-			$("loader-img").show();
+			$("#loader-img").show();
 		},
 		//mensagem de sucesso no console
 		//esse response é a lista de promocao
@@ -51,7 +55,7 @@ function loadByScrollBar(pageNumber){
 			else{
 				$("#fim-btn").show();
 				//a imagem de load esta sendo removida porque não existe card para carregar
-				$("loader-img").remove();
+				$("#loader-img").remove();
 			}
 		},
 		//caso aconteça um erro
@@ -60,7 +64,44 @@ function loadByScrollBar(pageNumber){
 		},
 		//Ao carregar os 8 cards a imagem de load ser escondida de novo
 		complete: function(){
-			$("loader-img").hide();
+			$("#loader-img").hide();
 		}
 	})
 }
+//=======================================================================================================================================================
+//===============================================================Autocomplete============================================================================
+$("#autocomplete-input").autocomplete({
+	source: function(request, response){
+		$.ajax({
+			method: "GET",
+			url: "/promocao/site",
+			data:{
+				termo: request.term
+			},
+			success: function(result){
+				response(result);
+			}
+		});
+	}
+});
+//=======================================================================================================================================================
+//============================================================== Adicionar likes ========================================================================
+
+//Informando que quando clicamos em qualquer botão que tenha esse id, uma função acontece. O * que informa que pode ser qualquer promocao 
+$(document).on("click","button[id*='likes-btn-']" ,function(){
+	//Atribuindo o valor do id a uma variavel para mostrar no console
+	var id = $(this).attr("id").split("-")[2];
+	console.log("id:", id);
+	
+	$.ajax({
+		method: "POST",
+		url: "/promocao/likes/"+ id,
+		//lembrando que o response recebe uma resposta do servidor e pode ser usado para qualquer coisa, nesse caso é para likes
+		success: function(response){
+			$("#likes-count" + id).text(response);
+		},
+		error: function(xhr){
+			alert("Ops, ocorreu um erro:" + xhr.status + ", " + xhr.statusText);
+		}
+	});
+});
