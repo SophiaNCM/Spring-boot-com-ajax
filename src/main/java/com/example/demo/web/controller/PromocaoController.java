@@ -26,7 +26,9 @@ import com.example.demo.domain.Categoria;
 import com.example.demo.domain.Promocao;
 import com.example.demo.repository.CategoriaRepository;
 import com.example.demo.repository.PromocaoRepository;
+import com.example.demo.service.PromocaoDataTableService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 
@@ -44,6 +46,34 @@ public class PromocaoController {
 	//Informando o repositorio de categoria
 	@Autowired
 	private CategoriaRepository categoriaRepository;
+	
+	//==========================================================DATATABLES==================================================================
+	@GetMapping("/tabela")
+	public String showTabela() {
+		return "promo-datatables";
+	}
+	@GetMapping("/datatables/server")
+	public ResponseEntity<?> datatables(HttpServletRequest request){
+		Map<String, Object> data = new PromocaoDataTableService().execute(promocaoRepository, request);
+		return ResponseEntity.ok(data);
+	}
+	//======================================================================================================================================
+	
+	//==========================================================AUTOCOMPLETE================================================================
+	@GetMapping("/site")
+	public ResponseEntity<?> autocompleteByTermo(@RequestParam("termo") String termo){
+		List<String> sites = promocaoRepository.findSiteByTermo(termo);
+		return ResponseEntity.ok(sites);
+	}
+	@GetMapping("/site/list")
+	public String ListarPorSite(@RequestParam("site") String site, ModelMap model) {
+		Sort sort = Sort.by(Sort.Direction.DESC, "dtCadastro");
+		PageRequest pageRequest = PageRequest.of(0,8,sort);
+		model.addAttribute("promocao", promocaoRepository.findBySite(site, pageRequest));
+		return "promo-card";
+	}
+	//======================================================================================================================================
+	
 	//==========================================================ADD LIKES ==================================================================
 	@PostMapping("/like/{id}")
 	public ResponseEntity<?> adicionarLikes(@PathVariable("id") Long id){
@@ -66,11 +96,18 @@ public class PromocaoController {
 	//Aqui vamos atualizar o promo-card mostrando os proximos 8 cards
 	@GetMapping("/list/ajax")
 	//Informando a pagina e caso não tenha pagina, ira mostrar a pagina 1
-	public String listarCards(@RequestParam(name = "page", defaultValue = "1") int page, ModelMap model) {
+	public String listarCards(@RequestParam(name = "page", defaultValue = "1") int page,
+								@RequestParam(name = "site", defaultValue = "") String site,ModelMap model) {
 		Sort sort = Sort.by(Sort.Direction.DESC, "dtCadastro");
 		PageRequest pageRequest = PageRequest.of(page,8,sort);
-		model.addAttribute("promocao", promocaoRepository.findAll(pageRequest));
-		//Aqui não será mostrado uma nova pagina, mas vai atualizar os cards
+		if(site.isEmpty()) {
+			model.addAttribute("promocao", promocaoRepository.findAll(pageRequest));//Aqui não será mostrado uma nova pagina, mas vai atualizar os cards
+
+		}
+		else {
+			model.addAttribute("promocao", promocaoRepository.findBySite(site,pageRequest));//Aqui não será mostrado uma nova pagina, mas vai atualizar os cards, mostrando somente os cardas que possuiem o termo pesquisado
+
+		}
 		return "promo-card";
 	}
 //========================================================================================================================================

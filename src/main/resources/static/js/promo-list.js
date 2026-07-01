@@ -27,13 +27,16 @@ $(window).scroll(function(){
 
 //===================================================Fução para atualizar a pagina====================================================================
 function loadByScrollBar(pageNumber){
+	var site = $("autocomplete-input").val();
+
 	//função ajax
 	$.ajax({
 		//Metodo GET, pois quando o usuario chegar ao final da promo-list, ele será redirecionado para a url promocao/list/ajax/pageNumber 
 		method: "GET",
 		url: "/promocao/list/ajax",
 		data: {
-			page: pageNumber
+			page: pageNumber,
+			site: site
 		},
 		//Antes de adicionar os proximos 8 card a imagem de load sera mostrada
 		beforeSend: function(){
@@ -83,6 +86,33 @@ $("#autocomplete-input").autocomplete({
 			}
 		});
 	}
+});
+
+	//esconder os cards que não contem a palavra digitada
+$("autocomplete-submit").on("click", function(){
+	var site = $("autocomplete-input").val();
+	$.ajax({
+		method: "GET",
+		url: "/promocao/site/list",
+		data: {
+			site:site
+		},
+		beforeSend: function(){
+			pageNumber = 0;
+			$("#fim-btn").hide();
+			$(".row").fadeOut(400, function(){
+				$(this).empty();
+			});
+		},
+		success: function(response){
+			$(".row").fadeIn(250, function(){
+				$(this).append(response);
+			});
+		},
+		error: function(xhr){
+			alert("Ops, algo deu errado"+ xhr.status + "," + xhr.statusText);
+		}
+	});
 });
 //=======================================================================================================================================================
 //============================================================== Adicionar likes ========================================================================
